@@ -1,0 +1,108 @@
+{% extends 'fileshare/base.html' %}
+
+
+{% block content %}
+<head>
+	<style>
+	table#t01 tr:nth-child(even) {
+		background-color: #fff ;
+	}
+	table#t01 tr:nth-child(odd) {
+		background-color: #eee;
+	}
+	td {
+		padding: 3px;
+		border: 3px solid white;
+	}
+	</style>
+</head>
+
+<div class="container">
+	<div class="jumbotron">
+		<form method="POST">
+			{% csrf_token %}
+			{{ update_form.as_p }}
+
+
+			{% if folder.reports.count == 0 %}
+			There are no reports in this folder.
+			{% else %}
+			<h3><b>Reports in this folder</b></h3><br>
+			<table id="t01" width="80%">
+				<tr>
+					<th></th>
+					<th>Title</th>
+					<th>Type</th>
+					<th>Last Modified By</th>
+					<th>Last Modified</th>
+					<th>Created</th>
+				</tr>
+				{% for r in folder.reports.all %}
+				<tr>
+					<td>
+						{% if r.is_encrypted %}
+						<div align="right"><span class="glyphicon glyphicon-lock" style="color:#50aeed"></span></div>
+						{% else %}
+						{% endif %}
+					</td>
+					<td><a href="https://quiet-tundra-22071.herokuapp.com/fileshare/view_report/{{ r.id }}">{{ r.short_desc }}</a></td>
+					<td>
+						{% if r.private %}
+							<b><font color="red">Private</font></b>
+						{% else %}
+							<b><font color="green">Public</font></b>
+						{% endif %}
+					</td>
+					<td>{{ r.last_modified_by }}</td><td>{{ r.last_modified }}</td><td>{{ r.created }}</td>
+					<form id="remove_{{ r.short_desc }}" action="." method="POST">
+						{% csrf_token %}
+						<td>
+							<center><button class="glyphicon glyphicon-remove" style="color:red" type="submit" name="action" value="r{{ r.id }}"></button></center>
+						</td>
+					</form>
+				</tr>
+				{% endfor %}
+			</table>
+			{% endif %}<br><br>
+
+			{% if able_to_add.count == 0 %}
+			There are no reports to add to this folder.
+			{% else %}
+			<h3><b>Add a report to this folder</b></h3><br>
+			<table id="t01" width="80%">
+				<tr>
+					<th></th>
+					<th>Title</th>
+					<th>Last Modified By</th>
+					<th>Last Modified</th>
+					<th>Created</th>
+				</tr>
+				{% for r in able_to_add %}
+				<tr>
+					<td>
+						{% if r.is_encrypted %}
+						<div align="right"><span class="glyphicon glyphicon-lock" style="color:#50aeed"></span></div>
+						{% else %}
+						{% endif %}
+					</td>
+					<td>{{ r.short_desc }}</td><td>{{ r.last_modified_by }}</td><td>{{ r.last_modified }}</td><td>{{ r.created }}</td>
+					<form id="add_{{ r.short_desc }}" action="." method="POST">
+						{% csrf_token %}
+						<td>
+							<center><button class="button buttonView" type="submit" name="action" value="a{{ r.id }}">Add</button></center>
+						</td>
+					</form>
+				</tr>
+				{% endfor %}
+			</table>
+			{% endif %}<br><br>
+
+			<input class="button buttonSubmit" type="submit" name="action" value="Update"/>
+			<input class="button buttonDelete" type="submit" name="action" value="Delete"/>
+		</form>
+	</div>
+</div>
+
+
+
+{% endblock %}

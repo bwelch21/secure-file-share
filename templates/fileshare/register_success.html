@@ -1,0 +1,28 @@
+{% extends 'fileshare/base.html' %}
+
+
+{% block content %}
+
+ <div class="container">
+
+  <h1>You have successfully registered! </h1>
+
+
+{% if key %}
+    Please save this key somewhere safe for decrypting items:<br />
+     {{key}}
+
+    {% endif %}
+     <br />
+    <a href="/login">Click here to return to the login page.</a>
+
+
+
+
+
+
+</div>
+
+{% endblock %}
+
+
